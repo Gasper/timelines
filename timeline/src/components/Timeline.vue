@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import 'vis-timeline/styles/vis-timeline-graph2d.min.css';
 import {DataSet, Timeline} from 'vis-timeline/standalone/umd/vis-timeline-graph2d.min.js';
 
 export default {
