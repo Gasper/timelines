@@ -1,20 +1,27 @@
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
+    <GroupPicker :categories="categories" />
     <Timeline :groups="groups" :timelineEvents="timelineEvents" />
   </div>
 </template>
 
 <script>
 import Timeline from './components/Timeline.vue';
+import GroupPicker from './components/GroupPicker.vue';
 
 export default {
   name: 'App',
   components: {
     Timeline,
+    GroupPicker,
   },
   data() {
     return {
+      categories: [
+        {id: 0, name: 'Sport', groups: [{id: 0, name: 'Tour de France 2020'}, {id: 1, name: 'Serie A'}]},
+        {id: 0, name: 'Volitve', groups: [{id: 2, name: 'Občinske 2020'}, {id: 3, name: 'Državni zbor'}]},
+      ],
       groups: [
         {id: 0, content: 'Volitve 2020'},
         {id: 1, content: 'Prvenstvo 2020'},
