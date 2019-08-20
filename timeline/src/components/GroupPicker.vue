@@ -7,7 +7,12 @@
             {{ category.name }}
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="#" v-for="group in category.groups" :key="group.id">{{ group.name }}</a>
+            <a class="dropdown-item" href="#" 
+              v-for="group in category.groups"
+              :key="group.id"
+              @click="selectGroup(category.id, group.id)">
+              {{ group.name }}
+            </a>
           </div>
         </li>
       </div>
@@ -23,6 +28,14 @@ export default {
   name: 'GroupPicker',
   props: {
     categories: Array,
+  },
+  methods: {
+    selectGroup(categoryId, groupId) {
+      this.$emit('groupChanged', {
+        categoryId: categoryId,
+        groupId: groupId,
+      });
+    },
   },
 }
 </script>

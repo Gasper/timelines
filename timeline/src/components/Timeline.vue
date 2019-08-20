@@ -31,5 +31,10 @@ export default {
     this.timelineInstance.setGroups(groups);
     this.timelineInstance.setItems(dataset);
   },
+  watch: {
+    groups(newGroups) {
+      this.timelineInstance.setGroups(newGroups);
+    },
+  },
 }
 </script>

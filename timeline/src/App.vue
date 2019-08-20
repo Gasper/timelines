@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
-    <GroupPicker :categories="categories" />
-    <Timeline :groups="groups" :timelineEvents="timelineEvents" />
+    <GroupPicker :categories="categories" @groupChanged="displayGroup" />
+    <Timeline :groups="displayedGroups" :timelineEvents="timelineEvents" />
   </div>
 </template>
 
@@ -16,16 +16,31 @@ export default {
     Timeline,
     GroupPicker,
   },
+  computed: {
+    displayedGroups() {
+      let groups = [];
+      
+      for (const displayedGroup of this.displayedGroupIds) {
+        const category = this.categories.find(category => category.id == displayedGroup.categoryId);
+        const group = category.groups.find(group => group.id == displayedGroup.groupId);
+
+        groups.push({
+          id: group.id,
+          content: group.name,
+        });
+      }
+
+      return groups;
+    },
+  },
   data() {
     return {
       categories: [
         {id: 0, name: 'Sport', groups: [{id: 0, name: 'Tour de France 2020'}, {id: 1, name: 'Serie A'}]},
-        {id: 0, name: 'Volitve', groups: [{id: 2, name: 'Občinske 2020'}, {id: 3, name: 'Državni zbor'}]},
+        {id: 1, name: 'Volitve', groups: [{id: 2, name: 'Občinske 2020'}, {id: 3, name: 'Državni zbor'}]},
       ],
-      groups: [
-        {id: 0, content: 'Volitve 2020'},
-        {id: 1, content: 'Prvenstvo 2020'},
-        {id: 2, content: 'Tour de France 2020'}
+      displayedGroupIds: [
+        {categoryId: 0,  groupId: 1}
       ],
       timelineEvents: [
         {id: 0, content: 'item 1', start: '2020-05-20', group: 0},
@@ -36,6 +51,11 @@ export default {
         {id: 5, content: 'item 6', start: '2020-05-27', group: 2},
       ],
     };
+  },
+  methods: {
+    displayGroup(newDisplayGroup) {
+      this.displayedGroupIds.push(newDisplayGroup);
+    },
   },
 }
 </script>
