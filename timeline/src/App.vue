@@ -2,7 +2,7 @@
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
     <GroupPicker :categories="categories" @groupChanged="displayGroup" />
-    <Timeline :groups="displayedGroups" :timelineEvents="timelineEvents" />
+    <Timeline :groups="displayedGroups" :timelineEvents="timelineEvents" @closeGroupA="closeGroup" />
   </div>
 </template>
 
@@ -55,6 +55,10 @@ export default {
   methods: {
     displayGroup(newDisplayGroup) {
       this.displayedGroupIds.push(newDisplayGroup);
+    },
+    closeGroup(groupId) {
+      let position = this.displayedGroupIds.findIndex(group => group.groupId == groupId);
+      this.displayedGroupIds.splice(position, 1);
     },
   },
 }
