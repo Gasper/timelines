@@ -71,7 +71,7 @@ class Query(ObjectType):
     events = Field(List(of_type=Event),
                    start_time=String(required=True),
                    end_time=String(required=True),
-                   group=String(required=True))
+                   group_id=String(required=True))
 
     @staticmethod
     def resolve_categories(root, info):
@@ -89,9 +89,9 @@ class Query(ObjectType):
         return database.get_event(event_id)
 
     @staticmethod
-    def resolve_events(root, info, start_time, end_time, group):
+    def resolve_events(root, info, start_time, end_time, group_id):
         database = info.context.get('database')
-        return database.get_events(start=start_time, end=end_time, group=group)
+        return database.get_events(start=start_time, end=end_time, group_id=group_id)
 
 
 schema = Schema(query=Query)
