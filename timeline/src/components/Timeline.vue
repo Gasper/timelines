@@ -49,6 +49,13 @@ export default {
     this.timelineInstance.setOptions(options);
     this.timelineInstance.setGroups(groups);
     this.timelineInstance.setItems(dataset);
+
+    this.timelineInstance.on('rangechanged', (event) => {
+      this.$emit('rangeChanged', {
+        start: event.start,
+        end: event.end
+      });
+    });
   },
   watch: {
     groups(newGroups) {
@@ -57,7 +64,7 @@ export default {
   },
   methods: {
     closeGroup(groupId) {
-      this.$emit('closeGroupA', groupId);
+      this.$emit('closeGroup', groupId);
     }
   }
 }

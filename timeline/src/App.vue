@@ -2,7 +2,7 @@
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
     <GroupPicker :categories="categories" @displayGroup="displayGroup" />
-    <Timeline :groups="displayedGroups" :timelineEvents="timelineEvents" @closeGroupA="closeGroup" />
+    <Timeline :groups="displayedGroups" :timelineEvents="timelineEvents" @closeGroup="closeGroup" />
   </div>
 </template>
 
