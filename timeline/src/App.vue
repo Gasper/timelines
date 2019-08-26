@@ -9,7 +9,8 @@
 <script>
 import Timeline from './components/Timeline.vue';
 import GroupPicker from './components/GroupPicker.vue';
-import TimelineApi from './components/TimelineApi'
+import TimelineApi from './components/TimelineApi';
+import SeriesCache from './components/SeriesCache';
 
 export default {
   name: 'App',
@@ -62,6 +63,7 @@ export default {
         {id: 4, content: 'item 5', start: '2020-05-25', group: 1},
         {id: 5, content: 'item 6', start: '2020-05-27', group: 2},
       ],
+      eventSeriesData: new SeriesCache(),
       groupsCategories: null,
       groupsMap: {},
     };
