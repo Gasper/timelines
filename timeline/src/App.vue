@@ -78,7 +78,7 @@ export default {
       this.groupsMap = groupsMap;
     },
     displayGroup(groupId) {
-      if (groupId in this.displayedGroupIds === false) {
+      if (!this.displayedGroupIds.includes(groupId)) {
         this.displayedGroupIds.push(groupId);
       }
     },
