@@ -9,6 +9,7 @@
 <script>
 import Timeline from './components/Timeline.vue';
 import GroupPicker from './components/GroupPicker.vue';
+import TimelineApi from './components/TimelineApi'
 
 export default {
   name: 'App',
@@ -16,11 +17,32 @@ export default {
     Timeline,
     GroupPicker,
   },
+  created() {
+    this.timelineApi = new TimelineApi('http://localhost:5000/graphql');
+    this.loadCategories();
+  },
   computed: {
+    categories() {
+      if (this.groupsCategories === null) {
+        return [];
+      }
+
+      let categoryMap = {};
+      for (const category of this.groupsCategories.categories) {
+        categoryMap[category.id] = category;
+        categoryMap[category.id].groups = [];
+      }
+
+      for (const group of this.groupsCategories.groups) {
+        categoryMap[group.categoryId].groups.push(group);
+      }
+
+      return Object.values(categoryMap);
+    },
     displayedGroups() {
       let groups = [];
       
-      for (const displayedGroup of this.displayedGroupIds) {
+      /*for (const displayedGroup of this.displayedGroupIds) {
         const category = this.categories.find(category => category.id == displayedGroup.categoryId);
         const group = category.groups.find(group => group.id == displayedGroup.groupId);
 
@@ -28,17 +50,13 @@ export default {
           id: group.id,
           content: group.name,
         });
-      }
+      }*/
 
       return groups;
     },
   },
   data() {
     return {
-      categories: [
-        {id: 0, name: 'Sport', groups: [{id: 0, name: 'Tour de France 2020'}, {id: 1, name: 'Serie A'}]},
-        {id: 1, name: 'Volitve', groups: [{id: 2, name: 'Občinske 2020'}, {id: 3, name: 'Državni zbor'}]},
-      ],
       displayedGroupIds: [
         {categoryId: 0,  groupId: 1}
       ],
@@ -50,9 +68,13 @@ export default {
         {id: 4, content: 'item 5', start: '2020-05-25', group: 1},
         {id: 5, content: 'item 6', start: '2020-05-27', group: 2},
       ],
+      groupsCategories: null,
     };
   },
   methods: {
+    async loadCategories() {
+      this.groupsCategories = await this.timelineApi.getGroups();
+    },
     displayGroup(newDisplayGroup) {
       this.displayedGroupIds.push(newDisplayGroup);
     },
