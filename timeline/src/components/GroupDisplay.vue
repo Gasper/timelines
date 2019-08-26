@@ -12,7 +12,7 @@ export default {
   name: 'GroupDisplay',
   props: {
     name: String,
-    groupId: Number,
+    groupId: String,
   },
   methods: {
     closeGroup() {

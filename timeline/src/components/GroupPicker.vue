@@ -10,7 +10,7 @@
             <a class="dropdown-item" href="#" 
               v-for="group in category.groups"
               :key="group.id"
-              @click="selectGroup(category.id, group.id)">
+              @click="displayGroup(group.id)">
               {{ group.name }}
             </a>
           </div>
@@ -30,11 +30,8 @@ export default {
     categories: Array,
   },
   methods: {
-    selectGroup(categoryId, groupId) {
-      this.$emit('groupChanged', {
-        categoryId: categoryId,
-        groupId: groupId,
-      });
+    displayGroup(groupId) {
+      this.$emit('displayGroup', groupId);
     },
   },
 }
