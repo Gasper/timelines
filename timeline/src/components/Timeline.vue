@@ -24,7 +24,6 @@ export default {
     let capturedThis = this;
     let dataset = new DataSet(this.timelineEvents);
     let options = {
-      groupEditable: true,
       groupTemplate(group) {
         let groupTag = new Vue({
           ...GroupDisplay,

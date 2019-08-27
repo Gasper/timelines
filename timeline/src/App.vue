@@ -110,7 +110,7 @@ export default {
       this.debouncedEventLoad();
     },
     closeGroup(groupId) {
-      let position = this.displayedGroupIds.findIndex(group => group.groupId == groupId);
+      let position = this.displayedGroupIds.findIndex(group => group == groupId);
       this.displayedGroupIds.splice(position, 1);
 
       localStorage.displayedGroups = JSON.stringify(this.displayedGroupIds);

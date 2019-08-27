@@ -9,3 +9,11 @@
 .vis-item.vis-line {
   left: 0;
 }
+
+.vis-group:nth-child(even) .vis-item {
+  background-color: #DBA2A1;
+}
+
+.vis-group:nth-child(odd) .vis-item {
+  background-color: #FCE1BE;
+}
