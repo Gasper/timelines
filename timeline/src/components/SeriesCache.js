@@ -8,11 +8,9 @@ class SeriesCache {
     data.sort((a, b) => {
       if (a.start < b.start) {
         return -1;
-      }
-      else if (b.start < a.start) {
+      } else if (b.start < a.start) {
         return 1;
-      }
-      else {
+      } else {
         return 0;
       }
     });

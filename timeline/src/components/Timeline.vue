@@ -7,6 +7,7 @@
 <script>
 import Vue from 'vue';
 import 'vis-timeline/styles/vis-timeline-graph2d.min.css';
+import './vis-timeline.patch.css';
 import {DataSet, Timeline} from 'vis-timeline/standalone/umd/vis-timeline-graph2d.min.js';
 import GroupDisplay from './GroupDisplay.vue';
 
@@ -16,12 +17,9 @@ export default {
     timelineEvents: Array,
     groups: Array,
   },
-  data() {
-    return {
-      timelineInstance: null,
-    };
+  created() {
+    this.timelineInstance = null;
   },
-  errorCaptured: false,
   mounted() {
     let capturedThis = this;
     let dataset = new DataSet(this.timelineEvents);
@@ -72,3 +70,11 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+#timeline {
+  box-sizing: border-box;
+  width: 100%;
+  height: 300px;
+}
+</style>
