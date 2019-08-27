@@ -26,14 +26,16 @@ class SeriesCache {
 
     let olderSamples = [];
     var i = 0;
-    while (data[i].start < seriesData.start) {
+    while (data[i].start < seriesData.start && data[i] < seriesData.items.length) {
       olderSamples.push(data[i]);
+      i += 1;
     }
 
     let newerSamples = [];
     i = data.length - 1;
-    while (data[i].start > seriesData.end) {
+    while (data[i].start > seriesData.end && i >= 0) {
       newerSamples.unshift(data[i]);
+      i -= 1;
     }
 
     seriesData.items = olderSamples.concat(seriesData.items, newerSamples);
@@ -45,18 +47,17 @@ class SeriesCache {
     if (end > seriesData.end) {
       seriesData.end = end;
     }
+
+    this.seriesMap[seriesId] = seriesData;
   }
 
   retrieve(seriesId, start, end) {
     const seriesData = this.seriesMap[seriesId];
-
-    return seriesData.filter(item => {
-      item.start >= start && item.start <= end
-    });
+    return seriesData.items.filter(item => item.start >= start && item.start <= end);
   }
 
   has_data(seriesId, start, end) {
-    if (seriesId in this.seriesMap === false) {
+    if (this.seriesMap[seriesId] === undefined) {
       return false;
     }
     

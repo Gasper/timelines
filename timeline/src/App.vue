@@ -2,15 +2,18 @@
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
     <GroupPicker :categories="categories" @displayGroup="displayGroup" />
-    <Timeline :groups="displayedGroups" :timelineEvents="timelineEvents" @closeGroup="closeGroup" />
+    <Timeline :groups="displayedGroups" :timelineEvents="displayedEvents"
+      @closeGroup="closeGroup" @rangeChanged="loadNewRange" />
   </div>
 </template>
 
 <script>
-import Timeline from './components/Timeline.vue';
-import GroupPicker from './components/GroupPicker.vue';
-import TimelineApi from './components/TimelineApi';
-import SeriesCache from './components/SeriesCache';
+// @ is an alias to /src
+import _ from 'loadsh';
+import Timeline from '@/components/Timeline.vue';
+import GroupPicker from '@/components/GroupPicker.vue';
+import TimelineApi from '@/components/TimelineApi';
+import SeriesCache from '@/components/SeriesCache';
 
 export default {
   name: 'App',
@@ -21,6 +24,10 @@ export default {
   created() {
     this.timelineApi = new TimelineApi('http://localhost:5000/graphql');
     this.loadCategories();
+
+    this.debouncedEventLoad = _.debounce(() => {
+      this.loadEvents();
+    }, 300);
   },
   computed: {
     categories() {
@@ -51,21 +58,32 @@ export default {
 
       return groups;
     },
+    displayedEvents() {
+      return this.timelineEvents.map((item) => {
+        let event = {
+          id: item.id,
+          content: item.title,
+          start: item.start,
+          group: item.groupId,
+        };
+
+        if ('end' in item && item.end != item.start) {
+          event['end'] = item.end;
+        }
+        
+        return event;
+      });
+    },
   },
   data() {
     return {
       displayedGroupIds: ['country'],
-      timelineEvents: [
-        {id: 0, content: 'item 1', start: '2020-05-20', group: 0},
-        {id: 1, content: 'item 2', start: '2020-05-14', group: 1},
-        {id: 2, content: 'item 3', start: '2020-05-18', group: 2},
-        {id: 3, content: 'item 4', start: '2020-05-16', end: '2020-05-19', group: 0},
-        {id: 4, content: 'item 5', start: '2020-05-25', group: 1},
-        {id: 5, content: 'item 6', start: '2020-05-27', group: 2},
-      ],
+      timelineEvents: [],
       eventSeriesData: new SeriesCache(),
       groupsCategories: null,
       groupsMap: {},
+      start: null,
+      end: null,
     };
   },
   methods: {
@@ -83,11 +101,50 @@ export default {
       if (!this.displayedGroupIds.includes(groupId)) {
         this.displayedGroupIds.push(groupId);
       }
+      this.debouncedEventLoad();
     },
     closeGroup(groupId) {
       let position = this.displayedGroupIds.findIndex(group => group.groupId == groupId);
       this.displayedGroupIds.splice(position, 1);
     },
+    loadNewRange(range) {
+      this.start = range.start;
+      this.end = range.end;
+      this.debouncedEventLoad();
+    },
+    async loadEvents() {
+      let start = this.start;
+      let end = this.end;
+      let groupIds = this.displayedGroupIds;
+
+      if (start === null || end === null || groupIds === null) {
+        return;
+      }
+
+      let loadingRanges = [];
+      for (const groupId of groupIds) {
+        if (!this.eventSeriesData.has_data(groupId, start, end)) {
+          const loadEventsPromise = this.timelineApi.getEvents(groupId, start, end);
+          const loadEventsStorePromise = loadEventsPromise.then((events) => {
+            this.eventSeriesData.store(groupId, start, end, events);
+          });
+
+          loadingRanges.push(loadEventsStorePromise);
+        }
+      }
+
+      await Promise.all(loadingRanges);
+
+      var displayedEvents = [];
+      for (const groupId of groupIds) {
+        if (this.eventSeriesData.has_data(groupId, start, end)) {
+          const storedEvents = this.eventSeriesData.retrieve(groupId, start, end);
+          displayedEvents = displayedEvents.concat(storedEvents);
+        }
+      }
+
+      this.timelineEvents = displayedEvents;
+    }
   },
 }
 </script>

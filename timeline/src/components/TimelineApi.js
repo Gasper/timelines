@@ -32,7 +32,7 @@ class TimelineApi {
     return queryResult;
   }
 
-  async getEvents(startDateTime, endDateTime, groupId) {
+  async getEvents(groupId, startDateTime, endDateTime) {
     const queryResult = await this.fetchGraphql(`
       query {
         events(startTime: "${startDateTime}", endTime: "${endDateTime}",
