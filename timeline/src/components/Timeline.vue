@@ -49,11 +49,11 @@ export default {
     this.timelineInstance.setItems(dataset);
 
     this.timelineInstance.on('rangechanged', (event) => {
-      this.$emit('rangeChanged', {
-        start: new Date(event.start).toISOString(),
-        end: new Date(event.end).toISOString(),
-      });
+      this.rangeChanged(event.start, event.end);
     });
+
+    let timelineWindow = this.timelineInstance.getWindow();
+    this.rangeChanged(timelineWindow.start, timelineWindow.end);
   },
   watch: {
     groups(newGroups) {
@@ -66,6 +66,12 @@ export default {
   methods: {
     closeGroup(groupId) {
       this.$emit('closeGroup', groupId);
+    },
+    rangeChanged(start, end) {
+      this.$emit('rangeChanged', {
+        start: new Date(start).toISOString(),
+        end: new Date(end).toISOString(),
+      });
     }
   }
 }
