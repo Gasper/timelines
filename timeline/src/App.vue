@@ -123,8 +123,10 @@ export default {
 
       let loadingRanges = [];
       for (const groupId of groupIds) {
-        if (!this.eventSeriesData.has_data(groupId, start, end)) {
-          const loadEventsPromise = this.timelineApi.getEvents(groupId, start, end);
+        const missingRanges = this.eventSeriesData.missing_ranges(groupId, start, end);
+
+        for (const missingRange of missingRanges) {
+          const loadEventsPromise = this.timelineApi.getEvents(groupId, missingRange.start, missingRange.end);
           const loadEventsStorePromise = loadEventsPromise.then((events) => {
             this.eventSeriesData.store(groupId, start, end, events);
           });
@@ -137,10 +139,8 @@ export default {
 
       var displayedEvents = [];
       for (const groupId of groupIds) {
-        if (this.eventSeriesData.has_data(groupId, start, end)) {
-          const storedEvents = this.eventSeriesData.retrieve(groupId, start, end);
-          displayedEvents = displayedEvents.concat(storedEvents);
-        }
+        const storedEvents = this.eventSeriesData.retrieve(groupId, start, end);
+        displayedEvents = displayedEvents.concat(storedEvents);
       }
 
       this.timelineEvents = displayedEvents;

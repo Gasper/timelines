@@ -26,14 +26,14 @@ class SeriesCache {
 
     let olderSamples = [];
     var i = 0;
-    while (data[i].start < seriesData.start && data[i] < seriesData.items.length) {
+    while (data[i] < seriesData.items.length && data[i].start < seriesData.start) {
       olderSamples.push(data[i]);
       i += 1;
     }
 
     let newerSamples = [];
     i = data.length - 1;
-    while (data[i].start > seriesData.end && i >= 0) {
+    while (i >= 0 && data[i].start > seriesData.end) {
       newerSamples.unshift(data[i]);
       i -= 1;
     }
@@ -56,18 +56,31 @@ class SeriesCache {
     return seriesData.items.filter(item => item.start >= start && item.start <= end);
   }
 
-  has_data(seriesId, start, end) {
+  missing_ranges(seriesId, start, end) {
+
     if (this.seriesMap[seriesId] === undefined) {
-      return false;
+      return [{start: start, end: end}];
     }
-    
+
     const seriesData = this.seriesMap[seriesId];
-    
-    if (start < seriesData.start || end > seriesData.end) {
-      return false;
+
+    if (end < seriesData.start) {
+      return [{start: start, end: seriesData.start}]
+    }
+    else if (start > seriesData.end) {
+      return [{start: seriesData.end, end: end}]
     }
     else {
-      return true;
+      let ranges = [];
+      if (start < seriesData.start) {
+        ranges.push({start: start, end: seriesData.start});
+      }
+
+      if (end > seriesData.end) {
+        ranges.push({start: seriesData.end, end: end});
+      }
+
+      return ranges;
     }
   }
 }
