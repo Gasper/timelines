@@ -28,6 +28,10 @@ export default {
     this.debouncedEventLoad = _.debounce(() => {
       this.loadEvents();
     }, 300);
+
+    if (localStorage.displayedGroups) {
+      this.displayedGroupIds = JSON.parse(localStorage.displayedGroups);
+    }
   },
   computed: {
     categories() {
@@ -77,7 +81,7 @@ export default {
   },
   data() {
     return {
-      displayedGroupIds: ['country'],
+      displayedGroupIds: [],
       timelineEvents: [],
       eventSeriesData: new SeriesCache(),
       groupsCategories: null,
@@ -100,12 +104,16 @@ export default {
     displayGroup(groupId) {
       if (!this.displayedGroupIds.includes(groupId)) {
         this.displayedGroupIds.push(groupId);
+        
+        localStorage.displayedGroups = JSON.stringify(this.displayedGroupIds);
       }
       this.debouncedEventLoad();
     },
     closeGroup(groupId) {
       let position = this.displayedGroupIds.findIndex(group => group.groupId == groupId);
       this.displayedGroupIds.splice(position, 1);
+
+      localStorage.displayedGroups = JSON.stringify(this.displayedGroupIds);
     },
     loadNewRange(range) {
       this.start = range.start;
