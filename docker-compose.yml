@@ -1,0 +1,15 @@
+version: '3'
+services:
+  timeline_api:
+    image: "timeline_api"
+    ports:
+      - "5080:80"
+    environment:
+      - MONGO_HOST=mongo.timeline_default
+      - MONGO_PORT=27017
+  timeline_web:
+    image: "timeline_web"
+    ports:
+      - "8080:80"
+  mongo:
+    image: "mongo:latest"

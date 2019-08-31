@@ -13,6 +13,7 @@
 <script>
 // @ is an alias to /src
 import _ from 'loadsh';
+import Env from '../env';
 import Timeline from '@/components/Timeline.vue';
 import GroupPicker from '@/components/GroupPicker.vue';
 import TimelineApi from '@/components/TimelineApi';
@@ -27,7 +28,7 @@ export default {
     ItemDisplay,
   },
   created() {
-    this.timelineApi = new TimelineApi('http://localhost:5000/graphql');
+    this.timelineApi = new TimelineApi(Env.GRAPHQL_API);
     this.loadCategories();
 
     this.debouncedEventLoad = _.debounce(() => {

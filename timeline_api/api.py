@@ -25,7 +25,8 @@ def graphql():
         logger.error(query_result.errors)
         abort(500)
     response = make_response(json.dumps(query_result.data))
-    response.headers['Access-Control-Allow-Origin'] = '*'
+    # Uncomment the line below when using development server
+    # response.headers['Access-Control-Allow-Origin'] = '*'
     return response
 
 
