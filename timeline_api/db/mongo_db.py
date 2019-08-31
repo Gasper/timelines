@@ -2,8 +2,8 @@ import pymongo
 
 
 class MongoDatabase:
-    def __init__(self):
-        client = pymongo.MongoClient('localhost', 27017)
+    def __init__(self, host, port):
+        client = pymongo.MongoClient(host, port)
         self.categories_collection = client.timeline.categories
         self.groups_collection = client.timeline.groups
         self.events_collection = client.timeline.events

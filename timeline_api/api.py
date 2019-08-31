@@ -2,6 +2,7 @@ import json
 import logging
 import logging.config
 import graphql_api
+import os
 
 from flask import Flask, request, make_response, abort
 from db.mongo_db import MongoDatabase
@@ -10,7 +11,7 @@ logging.config.fileConfig('logging.conf')
 logger = logging.getLogger()
 
 flask_app = Flask(__name__)
-db = MongoDatabase()
+db = MongoDatabase(os.environ['MONGO_HOST'], int(os.environ['MONGO_PORT']))
 
 
 @flask_app.route('/graphql', methods=['POST'])
