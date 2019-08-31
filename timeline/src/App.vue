@@ -1,9 +1,12 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
     <GroupPicker :categories="categories" @displayGroup="displayGroup" />
+
     <Timeline :groups="displayedGroups" :timelineEvents="displayedEvents"
-      @closeGroup="closeGroup" @rangeChanged="loadNewRange" />
+      @closeGroup="closeGroup" @rangeChanged="loadNewRange"
+      @selectItem="selectItem" />
+
+    <ItemDisplay :title="displayedItem.title" :content="displayedItem.content" />
   </div>
 </template>
 
@@ -14,12 +17,14 @@ import Timeline from '@/components/Timeline.vue';
 import GroupPicker from '@/components/GroupPicker.vue';
 import TimelineApi from '@/components/TimelineApi';
 import SeriesCache from '@/components/SeriesCache';
+import ItemDisplay from '@/components/ItemDisplay';
 
 export default {
   name: 'App',
   components: {
     Timeline,
     GroupPicker,
+    ItemDisplay,
   },
   created() {
     this.timelineApi = new TimelineApi('http://localhost:5000/graphql');
@@ -88,6 +93,10 @@ export default {
       groupsMap: {},
       start: null,
       end: null,
+      displayedItem: {
+        title: "",
+        content: "",
+      },
     };
   },
   methods: {
@@ -114,6 +123,21 @@ export default {
       this.displayedGroupIds.splice(position, 1);
 
       localStorage.displayedGroups = JSON.stringify(this.displayedGroupIds);
+    },
+    async selectItem(itemId) {
+      if (itemId !== undefined) {
+        const eventData = await this.timelineApi.getEvent(itemId);
+        this.displayedItem = {
+          title: eventData.title || '',
+          content: eventData.description || '',
+        };
+      }
+      else {
+        this.displayedItem = {
+          title: '',
+          content: '',
+        };
+      }
     },
     loadNewRange(range) {
       this.start = range.start;
@@ -164,6 +188,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 10px;
 }
 </style>

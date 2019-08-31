@@ -51,6 +51,10 @@ export default {
       this.rangeChanged(event.start, event.end);
     });
 
+    this.timelineInstance.on('select', (event) => {
+      this.selectItem(event.items[0]);
+    });
+
     let timelineWindow = this.timelineInstance.getWindow();
     this.rangeChanged(timelineWindow.start, timelineWindow.end);
   },
@@ -65,6 +69,9 @@ export default {
   methods: {
     closeGroup(groupId) {
       this.$emit('closeGroup', groupId);
+    },
+    selectItem(itemId) {
+      this.$emit('selectItem', itemId);
     },
     rangeChanged(start, end) {
       this.$emit('rangeChanged', {

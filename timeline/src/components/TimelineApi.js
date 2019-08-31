@@ -37,13 +37,25 @@ class TimelineApi {
       query {
         events(startTime: "${startDateTime}", endTime: "${endDateTime}",
         groupId: "${groupId}") {
-          id, title, description,
+          id, title,
           start, end,
           groupId
       }
     }`);
 
     return queryResult.events;
+  }
+
+  async getEvent(eventId) {
+    const queryResult = await this.fetchGraphql(`
+      query {
+        event(eventId: "${eventId}") {
+          id, title, description
+        }
+      }
+    `);
+
+    return queryResult.event;
   }
 }
 
