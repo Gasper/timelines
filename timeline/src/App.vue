@@ -35,9 +35,7 @@ export default {
       this.loadEvents();
     }, 300);
 
-    if (localStorage.displayedGroups) {
-      this.displayedGroupIds = JSON.parse(localStorage.displayedGroups);
-    }
+    this.restoreDisplayedGroups();
   },
   computed: {
     categories() {
@@ -114,8 +112,7 @@ export default {
     displayGroup(groupId) {
       if (!this.displayedGroupIds.includes(groupId)) {
         this.displayedGroupIds.push(groupId);
-        
-        localStorage.displayedGroups = JSON.stringify(this.displayedGroupIds);
+        this.storeDisplayedGroups();
       }
       this.debouncedEventLoad();
     },
@@ -123,7 +120,7 @@ export default {
       let position = this.displayedGroupIds.findIndex(group => group == groupId);
       this.displayedGroupIds.splice(position, 1);
 
-      localStorage.displayedGroups = JSON.stringify(this.displayedGroupIds);
+      this.storeDisplayedGroups();
     },
     async selectItem(itemId) {
       if (itemId !== undefined) {
@@ -177,6 +174,14 @@ export default {
       }
 
       this.timelineEvents = displayedEvents;
+    },
+    storeDisplayedGroups() {
+      localStorage.displayedGroups = JSON.stringify(this.displayedGroupIds);
+    },
+    restoreDisplayedGroups() {
+      if (localStorage.displayedGroups) {
+        this.displayedGroupIds = JSON.parse(localStorage.displayedGroups);
+      }
     }
   },
 }
