@@ -28,7 +28,7 @@ export default {
     ItemDisplay,
   },
   created() {
-    this.timelineApi = new TimelineApi(Env.GRAPHQL_API);
+    this.timelineApi = new TimelineApi(Env.GRAPHQL_API, new SeriesCache());
     this.loadCategories();
 
     this.debouncedEventLoad = _.debounce(() => {
@@ -151,29 +151,7 @@ export default {
         return;
       }
 
-      let loadingRanges = [];
-      for (const groupId of groupIds) {
-        const missingRanges = this.eventSeriesData.missing_ranges(groupId, start, end);
-
-        for (const missingRange of missingRanges) {
-          const loadEventsPromise = this.timelineApi.getEvents(groupId, missingRange.start, missingRange.end);
-          const loadEventsStorePromise = loadEventsPromise.then((events) => {
-            this.eventSeriesData.store(groupId, start, end, events);
-          });
-
-          loadingRanges.push(loadEventsStorePromise);
-        }
-      }
-
-      await Promise.all(loadingRanges);
-
-      var displayedEvents = [];
-      for (const groupId of groupIds) {
-        const storedEvents = this.eventSeriesData.retrieve(groupId, start, end);
-        displayedEvents = displayedEvents.concat(storedEvents);
-      }
-
-      this.timelineEvents = displayedEvents;
+      this.timelineEvents = await this.timelineApi.getEvents(groupIds, start, end);
     },
     storeDisplayedGroups() {
       localStorage.displayedGroups = JSON.stringify(this.displayedGroupIds);

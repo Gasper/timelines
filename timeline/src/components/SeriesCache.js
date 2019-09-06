@@ -54,7 +54,7 @@ class SeriesCache {
     return seriesData.items.filter(item => item.start >= start && item.start <= end);
   }
 
-  missing_ranges(seriesId, start, end) {
+  missingRanges(seriesId, start, end) {
 
     if (this.seriesMap[seriesId] === undefined) {
       return [{start: start, end: end}];
