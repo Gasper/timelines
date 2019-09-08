@@ -16,7 +16,11 @@ class TimelineApi {
         'Content-Type': 'text/plain',
         Accept: 'application/json',
       },
-      body: query,
+      body: `
+        query {
+          ${query}
+        }
+      `,
     });
 
     if (!eventFetch.ok) {
@@ -26,14 +30,16 @@ class TimelineApi {
     return await eventFetch.json();
   }
 
-  async getGroups() {
-    const queryResult = await this.fetchGraphql(`
-      query {
-        categories {id, name}
-        groups {id, name, categoryId}
-      }`);
+  async getGroupsAndCategories() {
+    let categoriesQuery = new Query('categories');
+    categoriesQuery.find('id', 'name');
 
-    return queryResult;
+    let groupsQuery = new Query('groups');
+    groupsQuery.find(['id', 'name', 'categoryId']);
+
+    let fullQuery = categoriesQuery.toString() + '\n' + groupsQuery.toString();
+
+    return await this.fetchGraphql(fullQuery);
   }
 
   getMissingRangesQueries(groupIds, start, end) {
@@ -75,11 +81,7 @@ class TimelineApi {
       Array.from(missingRangesQueries.values())
       .map(query => query.queryString);
 
-    let fullQuery = `
-      query {
-        ${missingRangesQueryStrings.join("\n")}
-      }
-    `;
+    let fullQuery = missingRangesQueryStrings.join("\n");
 
     let missingData = await this.fetchGraphql(fullQuery);
     for (const [rangeUuid, rangeData] of missingRangesQueries) {
@@ -96,15 +98,14 @@ class TimelineApi {
   }
 
   async getEvent(eventId) {
-    const queryResult = await this.fetchGraphql(`
-      query {
-        event(eventId: "${eventId}") {
-          id, title, description
-        }
-      }
-    `);
 
-    return queryResult.event;
+    let eventQuery = new Query('event');
+    eventQuery.filter({eventId: eventId});
+    eventQuery.find(['id', 'title', 'description']);
+
+    let result = await this.fetchGraphql(eventQuery.toString());
+
+    return result.event;
   }
 }
 

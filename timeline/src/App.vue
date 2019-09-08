@@ -100,7 +100,7 @@ export default {
   },
   methods: {
     async loadCategories() {
-      this.groupsCategories = await this.timelineApi.getGroups();
+      this.groupsCategories = await this.timelineApi.getGroupsAndCategories();
       
       let groupsMap = {};
       for (const group of this.groupsCategories.groups) {
