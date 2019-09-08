@@ -47,12 +47,12 @@ export default {
     this.timelineInstance.setGroups(groups);
     this.timelineInstance.setItems(dataset);
 
-    this.timelineInstance.on('rangechanged', (event) => {
-      this.rangeChanged(event.start, event.end);
+    this.timelineInstance.on('rangechanged', (data) => {
+      this.rangeChanged(data.start, data.end);
     });
 
-    this.timelineInstance.on('select', (event) => {
-      this.selectItem(event.items[0]);
+    this.timelineInstance.on('select', (data) => {
+      this.selectEvent(data.items[0]);
     });
 
     let timelineWindow = this.timelineInstance.getWindow();
@@ -70,8 +70,8 @@ export default {
     closeGroup(groupId) {
       this.$emit('closeGroup', groupId);
     },
-    selectItem(itemId) {
-      this.$emit('selectItem', itemId);
+    selectEvent(eventId) {
+      this.$emit('selectEvent', eventId);
     },
     rangeChanged(start, end) {
       this.$emit('rangeChanged', {

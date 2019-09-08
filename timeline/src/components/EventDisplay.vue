@@ -1,5 +1,5 @@
 <template>
-  <div id="item-display" class="card">
+  <div id="event-display" class="card">
     <h5 class="card-header">{{ title }}</h5>
     <h4 class="text-center font-italic text-muted" 
       v-if="title === '' && content === ''">
@@ -15,7 +15,7 @@ import DOMPurify from 'dompurify/dist/purify.min.js';
 import marked from 'marked/marked.min.js';
 
 export default {
-  name: 'ItemDisplay',
+  name: 'EventDisplay',
   props: {
     title: String,
     content: String,
@@ -29,7 +29,7 @@ export default {
 </script>
 
 <style>
-#item-display {
+#event-display {
   min-height: 100px;
   margin: 7px;
 }

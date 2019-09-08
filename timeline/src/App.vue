@@ -4,9 +4,9 @@
 
     <Timeline :groups="displayedGroups" :timelineEvents="displayedEvents"
       @closeGroup="closeGroup" @rangeChanged="loadNewRange"
-      @selectItem="selectItem" />
+      @selectEvent="loadEvent" />
 
-    <ItemDisplay :title="displayedItem.title" :content="displayedItem.content" />
+    <EventDisplay :title="selectedEvent.title" :content="selectedEvent.content" />
   </div>
 </template>
 
@@ -18,18 +18,18 @@ import Timeline from '@/components/Timeline.vue';
 import GroupPicker from '@/components/GroupPicker.vue';
 import TimelineApi from '@/components/TimelineApi';
 import SeriesCache from '@/components/SeriesCache';
-import ItemDisplay from '@/components/ItemDisplay';
+import EventDisplay from '@/components/EventDisplay';
 
 export default {
   name: 'App',
   components: {
     Timeline,
     GroupPicker,
-    ItemDisplay,
+    EventDisplay,
   },
   created() {
     this.timelineApi = new TimelineApi(Env.GRAPHQL_API, new SeriesCache());
-    this.loadCategories();
+    this.loadGroupsAndCategories();
 
     this.debouncedEventLoad = _.debounce(() => {
       this.loadEvents();
@@ -87,28 +87,17 @@ export default {
     return {
       displayedGroupIds: [],
       timelineEvents: [],
-      eventSeriesData: new SeriesCache(),
       groupsCategories: null,
       groupsMap: {},
       start: null,
       end: null,
-      displayedItem: {
+      selectedEvent: {
         title: "",
         content: "",
       },
     };
   },
   methods: {
-    async loadCategories() {
-      this.groupsCategories = await this.timelineApi.getGroupsAndCategories();
-      
-      let groupsMap = {};
-      for (const group of this.groupsCategories.groups) {
-        groupsMap[group.id] = group;
-      }
-
-      this.groupsMap = groupsMap;
-    },
     displayGroup(groupId) {
       if (!this.displayedGroupIds.includes(groupId)) {
         this.displayedGroupIds.push(groupId);
@@ -122,25 +111,32 @@ export default {
 
       this.storeDisplayedGroups();
     },
-    async selectItem(itemId) {
-      if (itemId !== undefined) {
-        const eventData = await this.timelineApi.getEvent(itemId);
-        this.displayedItem = {
+    loadNewRange(range) {
+      this.start = range.start;
+      this.end = range.end;
+      this.debouncedEventLoad();
+    },
+    async loadGroupsAndCategories() {
+      this.groupsCategories = await this.timelineApi.getGroupsAndCategories();
+      
+      let groupsMap = {};
+      for (const group of this.groupsCategories.groups) {
+        groupsMap[group.id] = group;
+      }
+
+      this.groupsMap = groupsMap;
+    },
+    async loadEvent(eventId) {
+      if (eventId !== undefined) {
+        const eventData = await this.timelineApi.getEvent(eventId);
+        this.selectedEvent = {
           title: eventData.title || '',
           content: eventData.description || '',
         };
       }
       else {
-        this.displayedItem = {
-          title: '',
-          content: '',
-        };
+        this.selectedEvent = {title: '', content: ''};
       }
-    },
-    loadNewRange(range) {
-      this.start = range.start;
-      this.end = range.end;
-      this.debouncedEventLoad();
     },
     async loadEvents() {
       let start = this.start;
