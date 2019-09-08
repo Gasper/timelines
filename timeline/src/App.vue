@@ -56,15 +56,12 @@ export default {
       return Object.values(categoryMap);
     },
     displayedGroups() {
-      let groups = [];
+      let displayedGroupsData = [];
       for (const displayedGroupId of this.displayedGroupIds) {
-        if (displayedGroupId in this.groupsMap) {
-          let displayedGroup = this.groupsMap[displayedGroupId];
-          groups.push({id: displayedGroup.id, content: displayedGroup.name});
-        }
+        displayedGroupsData.push(this.groupsMap[displayedGroupId]);
       }
 
-      return groups;
+      return displayedGroupsData;
     },
     displayedEvents() {
       return this.timelineEvents.map((item) => {
