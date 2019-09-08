@@ -24,6 +24,7 @@ export default {
     let capturedThis = this;
 
     let options = {
+      orientation: 'both',
       groupTemplate(group) {
         let groupTag = new Vue({
           ...GroupDisplay,
@@ -67,7 +68,20 @@ export default {
       this.timelineInstance.setGroups(formattedGroupsData);
     },
     timelineEvents(newEvents) {
-      this.timelineInstance.setItems(newEvents);
+      this.timelineInstance.setItems(newEvents.map((item) => {
+        let event = {
+          id: item.id,
+          content: item.title,
+          start: item.start,
+          group: item.groupId,
+        };
+
+        if ('end' in item && item.end != item.start) {
+          event['end'] = item.end;
+        }
+
+        return event;
+      }));
     }
   },
   methods: {

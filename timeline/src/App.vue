@@ -2,7 +2,7 @@
   <div id="app">
     <GroupPicker :categories="categories" @displayGroup="displayGroup" />
 
-    <Timeline :groups="displayedGroups" :timelineEvents="displayedEvents"
+    <Timeline :groups="displayedGroups" :timelineEvents="timelineEvents"
       @closeGroup="closeGroup" @rangeChanged="loadNewRange"
       @selectEvent="loadEvent" />
 
@@ -62,22 +62,6 @@ export default {
       }
 
       return displayedGroupsData;
-    },
-    displayedEvents() {
-      return this.timelineEvents.map((item) => {
-        let event = {
-          id: item.id,
-          content: item.title,
-          start: item.start,
-          group: item.groupId,
-        };
-
-        if ('end' in item && item.end != item.start) {
-          event['end'] = item.end;
-        }
-        
-        return event;
-      });
     },
   },
   data() {
