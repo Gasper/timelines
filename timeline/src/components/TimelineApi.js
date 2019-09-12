@@ -77,15 +77,17 @@ class TimelineApi {
 
     let missingRangesQueries = this.getMissingRangesQueries(groupIds, start, end);
 
-    let missingRangesQueryStrings =
-      Array.from(missingRangesQueries.values())
-      .map(query => query.queryString);
+    if (missingRangesQueries.size > 0) {
+      let missingRangesQueryStrings =
+        Array.from(missingRangesQueries.values())
+        .map(query => query.queryString);
 
-    let fullQuery = missingRangesQueryStrings.join("\n");
+      let fullQuery = missingRangesQueryStrings.join("\n");
 
-    let missingData = await this.fetchGraphql(fullQuery);
-    for (const [rangeUuid, rangeData] of missingRangesQueries) {
-      this.cache.store(rangeData.groupId, rangeData.start, rangeData.end, missingData[rangeUuid]);
+      let missingData = await this.fetchGraphql(fullQuery);
+      for (const [rangeUuid, rangeData] of missingRangesQueries) {
+        this.cache.store(rangeData.groupId, rangeData.start, rangeData.end, missingData[rangeUuid]);
+      }
     }
 
     var displayedEvents = [];
