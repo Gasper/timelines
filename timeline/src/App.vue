@@ -2,6 +2,8 @@
   <div id="app">
     <GroupPicker :categories="categories" @displayGroup="displayGroup" />
 
+    <ErrorMessage v-if="displayErrorMessage" />
+
     <Timeline :groups="displayedGroups" :timelineEvents="timelineEvents"
       @closeGroup="closeGroup" @rangeChanged="loadNewRange"
       @selectEvent="loadEvent" />
@@ -19,6 +21,7 @@ import GroupPicker from '@/components/GroupPicker.vue';
 import TimelineApi from '@/components/TimelineApi';
 import SeriesCache from '@/components/SeriesCache';
 import EventDisplay from '@/components/EventDisplay';
+import ErrorMessage from '@/components/ErrorMessage.vue';
 
 export default {
   name: 'App',
@@ -26,6 +29,7 @@ export default {
     Timeline,
     GroupPicker,
     EventDisplay,
+    ErrorMessage,
   },
   created() {
     this.timelineApi = new TimelineApi(Env.GRAPHQL_API, new SeriesCache());
@@ -66,6 +70,7 @@ export default {
   },
   data() {
     return {
+      displayErrorMessage: false,
       displayedGroupIds: [],
       timelineEvents: [],
       groupsCategories: null,
@@ -73,8 +78,8 @@ export default {
       start: null,
       end: null,
       selectedEvent: {
-        title: "",
-        content: "",
+        title: '',
+        content: '',
       },
     };
   },
@@ -98,7 +103,14 @@ export default {
       this.debouncedEventLoad();
     },
     async loadGroupsAndCategories() {
-      this.groupsCategories = await this.timelineApi.getGroupsAndCategories();
+      try {
+        this.groupsCategories = await this.timelineApi.getGroupsAndCategories();
+        this.displayErrorMessage = false;
+      }
+      catch(error) {
+        console.error(error);
+        this.displayErrorMessage = true;
+      }
       
       let groupsMap = {};
       for (const group of this.groupsCategories.groups) {
@@ -109,11 +121,19 @@ export default {
     },
     async loadEvent(eventId) {
       if (eventId !== undefined) {
-        const eventData = await this.timelineApi.getEvent(eventId);
-        this.selectedEvent = {
-          title: eventData.title || '',
-          content: eventData.description || '',
-        };
+        try {
+          let eventData = await this.timelineApi.getEvent(eventId);
+          this.displayErrorMessage = false;
+
+          this.selectedEvent = {
+            title: eventData.title || '',
+            content: eventData.description || '',
+          };
+        }
+        catch (error) {
+          console.error(error);
+          this.displayErrorMessage = true;
+        }
       }
       else {
         this.selectedEvent = {title: '', content: ''};
@@ -128,7 +148,14 @@ export default {
         return;
       }
 
-      this.timelineEvents = await this.timelineApi.getEvents(groupIds, start, end);
+      try {
+        this.timelineEvents = await this.timelineApi.getEvents(groupIds, start, end);
+        this.displayErrorMessage = false;
+      }
+      catch (error) {
+        console.log(error);
+        this.displayErrorMessage = true;
+      }
     },
     storeDisplayedGroups() {
       localStorage.displayedGroups = JSON.stringify(this.displayedGroupIds);
@@ -149,6 +176,5 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 10px;
 }
 </style>
