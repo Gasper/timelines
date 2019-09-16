@@ -1,10 +1,9 @@
 <template>
   <div id="event-display" class="card">
     <h5 class="card-header">{{ title }}</h5>
-    <h4 class="text-center font-italic text-muted" 
-      v-if="title === '' && content === ''">
+    <div id="empty-message" class="text-muted" v-if="title === '' && content === ''">
       Select an event from the timeline.
-    </h4>
+    </div>
     <div class="card-text" v-html="markdownContent"></div>
   </div>
 </template>
@@ -32,5 +31,9 @@ export default {
 #event-display {
   min-height: 100px;
   margin: 7px;
+}
+
+#empty-message {
+  margin: 23px;
 }
 </style>

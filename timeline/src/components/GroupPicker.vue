@@ -1,6 +1,9 @@
 <template>
-  <div>
+  <div id="groups-menu">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="#">
+        <img src="../assets/icon.svg" width="30" height="30" alt="">
+      </a>
       <div class="navbar-nav" v-for="category in categories" :key="category.id">
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -36,3 +39,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+#groups-menu {
+  margin-bottom: 0px;
+}
+</style>
