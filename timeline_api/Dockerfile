@@ -1,8 +1,10 @@
+
+# Manual setup of the Timeline API using docker:
+#
 # docker network create timeline
 # docker build -f Dockerfile --rm -t timeline_api .
 # docker run -d --rm -p 27017:27017 --net timeline --name timeline-mongo mongo
 # docker run -it --rm -p 5080:80 --net timeline --name timeline-api timeline_api
-# cd /opt/timeline_api/ && uwsgi -s /tmp/timeline_api.sock --plugin python3 --manage-script-name --mount /=api:flask_app --uid nginx &> /var/log/uwsgi/uwsgi.log &
 
 FROM nginx:stable-alpine
 

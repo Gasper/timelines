@@ -1,3 +1,6 @@
+
+# Manual setup of the Timeline web app. Assumes that docker network "timeline" exists.
+#
 # docker build -f Dockerfile --rm -t timeline_web .
 # docker run -it --rm -p 8080:80 --net timeline --name timeline-web timeline_web
 
