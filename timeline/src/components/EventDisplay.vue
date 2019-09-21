@@ -30,7 +30,12 @@ export default {
 <style>
 #event-display {
   min-height: 100px;
-  margin: 7px;
+  margin: 7px 14px 7px 14px;
+}
+
+.card-text {
+  text-align: left;
+  padding: 10px;
 }
 
 #empty-message {

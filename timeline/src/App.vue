@@ -1,19 +1,22 @@
 <template>
   <div id="app">
-    <GroupPicker :categories="categories" @displayGroup="displayGroup" />
+    <main class="content">
+      <GroupPicker :categories="categories" @displayGroup="displayGroup" />
 
-    <ErrorMessage v-if="displayErrorMessage" />
+      <ErrorMessage v-if="displayErrorMessage" />
 
-    <Timeline :groups="displayedGroups" :timelineEvents="timelineEvents"
-      @closeGroup="closeGroup" @rangeChanged="loadNewRange"
-      @selectEvent="loadEvent" />
+      <Timeline :groups="displayedGroups" :timelineEvents="timelineEvents"
+        @closeGroup="closeGroup" @rangeChanged="loadNewRange"
+        @selectEvent="loadEvent" />
 
-    <EventDisplay :title="selectedEvent.title" :content="selectedEvent.content" />
+      <EventDisplay :title="selectedEvent.title" :content="selectedEvent.content" />
+    </main>
+
+    <Footer />
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
 import _ from 'loadsh';
 import Env from '../env';
 import Timeline from '@/components/Timeline.vue';
@@ -22,6 +25,7 @@ import TimelineApi from '@/components/TimelineApi';
 import SeriesCache from '@/components/SeriesCache';
 import EventDisplay from '@/components/EventDisplay';
 import ErrorMessage from '@/components/ErrorMessage.vue';
+import Footer from '@/components/Footer.vue';
 
 export default {
   name: 'App',
@@ -30,6 +34,7 @@ export default {
     GroupPicker,
     EventDisplay,
     ErrorMessage,
+    Footer,
   },
   created() {
     this.timelineApi = new TimelineApi(Env.GRAPHQL_API, new SeriesCache());
@@ -176,10 +181,17 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  display: flex;
+  flex-direction: column;
   height: 100%;
 }
 
-body {
+body, html {
   height: 100%;
+}
+
+main {
+  flex: 1 0 auto;
+  padding-bottom: 20px;
 }
 </style>
