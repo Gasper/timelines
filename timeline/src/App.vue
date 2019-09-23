@@ -17,7 +17,6 @@
 </template>
 
 <script>
-import _ from 'loadsh';
 import Env from '../env';
 import Timeline from '@/components/Timeline.vue';
 import GroupPicker from '@/components/GroupPicker.vue';
@@ -40,11 +39,6 @@ export default {
   created() {
     this.timelineApi = new TimelineApi(new GraphqlEndpoint(Env.GRAPHQL_API), new SeriesCache());
     this.loadGroupsAndCategories();
-
-    this.debouncedEventLoad = _.debounce(() => {
-      this.loadEvents();
-    }, 300);
-
     this.restoreDisplayedGroups();
   },
   computed: {
@@ -95,7 +89,7 @@ export default {
         this.displayedGroupIds.push(groupId);
         this.storeDisplayedGroups();
       }
-      this.debouncedEventLoad();
+      this.loadEvents();
     },
     closeGroup(groupId) {
       let position = this.displayedGroupIds.findIndex(group => group == groupId);
@@ -106,7 +100,7 @@ export default {
     loadNewRange(range) {
       this.start = range.start;
       this.end = range.end;
-      this.debouncedEventLoad();
+      this.loadEvents();
     },
     async loadGroupsAndCategories() {
       try {
