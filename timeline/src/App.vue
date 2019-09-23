@@ -21,6 +21,7 @@ import _ from 'loadsh';
 import Env from '../env';
 import Timeline from '@/components/Timeline.vue';
 import GroupPicker from '@/components/GroupPicker.vue';
+import GraphqlEndpoint from '@/components/GraphqlEndpoint';
 import TimelineApi from '@/components/TimelineApi';
 import SeriesCache from '@/components/SeriesCache';
 import EventDisplay from '@/components/EventDisplay';
@@ -37,7 +38,7 @@ export default {
     Footer,
   },
   created() {
-    this.timelineApi = new TimelineApi(Env.GRAPHQL_API, new SeriesCache());
+    this.timelineApi = new TimelineApi(new GraphqlEndpoint(Env.GRAPHQL_API), new SeriesCache());
     this.loadGroupsAndCategories();
 
     this.debouncedEventLoad = _.debounce(() => {

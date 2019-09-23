@@ -9,27 +9,6 @@ class TimelineApi {
     this.cache = cache;
   }
 
-  async fetchGraphql(query) {
-    const eventFetch = await fetch(new Request(this.graphqlEndpoint), {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'text/plain',
-        Accept: 'application/json',
-      },
-      body: `
-        query {
-          ${query}
-        }
-      `,
-    });
-
-    if (!eventFetch.ok) {
-      throw new Error(`HTTP error! status: ${eventFetch.status}`);
-    }
-    
-    return await eventFetch.json();
-  }
-
   async getGroupsAndCategories() {
     let categoriesQuery = new Query('categories');
     categoriesQuery.find('id', 'name');
@@ -39,7 +18,7 @@ class TimelineApi {
 
     let fullQuery = categoriesQuery.toString() + '\n' + groupsQuery.toString();
 
-    return await this.fetchGraphql(fullQuery);
+    return await this.graphqlEndpoint.fetchGraphql(fullQuery);
   }
 
   getMissingRangesQueries(groupIds, start, end) {
@@ -84,7 +63,7 @@ class TimelineApi {
 
       let fullQuery = missingRangesQueryStrings.join("\n");
 
-      let missingData = await this.fetchGraphql(fullQuery);
+      let missingData = await this.graphqlEndpoint.fetchGraphql(fullQuery);
       for (const [rangeUuid, rangeData] of missingRangesQueries) {
         this.cache.store(rangeData.groupId, rangeData.start, rangeData.end, missingData[rangeUuid]);
       }
@@ -105,7 +84,7 @@ class TimelineApi {
     eventQuery.filter({eventId: eventId});
     eventQuery.find(['id', 'title', 'description']);
 
-    let result = await this.fetchGraphql(eventQuery.toString());
+    let result = await this.graphqlEndpoint.fetchGraphql(eventQuery.toString());
 
     return result.event;
   }
